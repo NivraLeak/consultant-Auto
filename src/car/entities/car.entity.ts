@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Observation } from "./../../observation/entities/observation.entity";
 
 @Entity()
 export class Car {
@@ -6,6 +7,9 @@ export class Car {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({length: 45})
     vim: string;
+
+    @OneToMany(() => Observation, observation => observation.car)
+    observations: Observation[];
 }
