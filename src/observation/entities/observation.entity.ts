@@ -15,7 +15,7 @@ export class Observation {
     @ManyToOne(() => StateObservation, stateObservation => stateObservation.observations)
     stateObservation: StateObservation;
 
-    @ManyToOne(() => Car, car => car.observations)
+    @ManyToOne(() => Car, car => car.observations,{nullable:false})
     car: Car;
 
     @ManyToOne(() => User, user => user.observationsCreator)

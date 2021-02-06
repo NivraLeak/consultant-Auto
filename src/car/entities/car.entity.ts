@@ -7,7 +7,7 @@ export class Car {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({length: 45})
+    @Column({length: 45, nullable: false ,unique: true})
     vim: string;
 
     @OneToMany(() => Observation, observation => observation.car)

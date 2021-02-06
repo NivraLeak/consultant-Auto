@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeOrm';
 import { CarModule } from './car/car.module';
 import { ObservationModule } from './observation/observation.module';
 import { StateObservationModule } from './state-observation/state-observation.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { StateObservationModule } from './state-observation/state-observation.mo
     UserModule,
     CarModule,
     ObservationModule,
-    StateObservationModule],
+    StateObservationModule,
+    AuthModule],
   controllers: [],
   providers: [],
   exports: [],

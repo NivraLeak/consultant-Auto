@@ -1,17 +1,34 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany,BeforeInsert } from 'typeorm';
 import { Observation } from "./../../observation/entities/observation.entity";
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column({length: 45})
+    @PrimaryGeneratedColumn('uuid') id: string;  
+    @Column({ 
+        type: 'varchar', 
+        nullable: false, 
+        unique: true
+    }) 
     username: string;
-
-    @Column({length: 45})
-    password: string;
+    
+    @Column({ 
+        type: 'varchar', 
+        nullable: false
+    }) 
+    password: string;  
+    
+    @Column({ 
+        type: 'varchar', 
+        nullable: false
+    })
+    email: string;
+    
+    @BeforeInsert()  
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password, 10);  
+    }
 
     @OneToMany(() => Observation, observation => observation.userCreator)
     observationsCreator: Observation[];
