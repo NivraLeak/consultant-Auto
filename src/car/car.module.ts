@@ -14,6 +14,7 @@ import { AuthModule } from './../auth/auth.module';
   TypeOrmModule.forFeature([Car, User])
   ],
   providers: [CarService],
-  controllers: [CarController]
+  controllers: [CarController],
+  exports: [CarService]
 })
 export class CarModule {}

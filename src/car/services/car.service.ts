@@ -16,19 +16,22 @@ export class CarService {
          private readonly userService: UserService,
     ) {}
 
-    findAll() {
-        return this.carRepo.find();
+    async findAll({ username }: UserDto) {
+        const owner = await this.userService.findOne({ where: { username } });
+        const cars: Car[] = await this.carRepo.find();
+
+        return cars;
     }
 
-    register(body: any) {
-        const newCar = this.carRepo.create(body);
-        return this.carRepo.save(newCar);
+    async findOne(options?: object): Promise<CarDto> {
+        const car =  await this.carRepo.findOne(options);    
+        return toCarDto(car);  
     }
+
 
     async createCar({ username }: UserDto, createcarDto: CreateCarDto, ): Promise<any> {
         const { vim } = createcarDto;
-        
-        // get the user from db    
+           
         const owner = await this.userService.findOne({ where: { username } });
         const car: Car = await this.carRepo.create({ vim });
         await this.carRepo.save(car);

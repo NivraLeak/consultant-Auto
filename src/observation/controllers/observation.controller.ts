@@ -1,5 +1,8 @@
-import { Controller, Body, Get, Delete, Post, Put, Param } from '@nestjs/common';
+import { Controller, Body, Get, Delete, Post, Put, Param, UseGuards, Req } from '@nestjs/common';
 import { ObservationService } from './../services/observation.service';
+import { AuthGuard } from '@nestjs/passport';
+import { UserDto } from './../../user/dto/user.dto';
+import { CreateObservationDto } from './../dto/observation.create.dto';
 
 @Controller('api/observation')
 export class ObservationController {
@@ -8,33 +11,43 @@ export class ObservationController {
     ){}
 
     @Get()
+    @UseGuards(AuthGuard())
     async getAll() {
         return await this.observationService.findAll();
     }
 
     @Get('/totalObservation')
+    @UseGuards(AuthGuard())
     async getTotalObservation() {
         return await this.observationService.totalObservation();
     }
 
-    @Post('/register')
-    create(@Body() body: any) {
-        return this.observationService.register(body);
+    @Post('/create')
+    @UseGuards(AuthGuard())
+    async create(@Body() createObservationDto: CreateObservationDto, @Req() req: any) {
+        const user = <UserDto>req.user;
+        
+        return await this.observationService.createObservation(user, createObservationDto);
     }
 
-    @Post('/register/car/:id')
-    addCar(@Param('id') id: number, @Body() body: any) {
-        return this.observationService.addCarObservation(body, id);
+    @Post('/create/car/:id')
+    @UseGuards(AuthGuard())
+    async addCar(@Param('id') id: number, @Body() createObservationDto: CreateObservationDto, @Req() req: any) {
+        const user = <UserDto>req.user;
+        return await this.observationService.addCarObservation(createObservationDto, id, user);
     }
 
 
     @Put(':id')
-    update(@Param('id') id: number, @Body() body: any){
-        return this.observationService.update(id,body);
+    @UseGuards(AuthGuard())
+    async update(@Param('id') id: number, @Body() createObservationDto: CreateObservationDto, @Req() req: any){
+        const user = <UserDto>req.user;
+        return await this.observationService.update(id, createObservationDto, user);
     }
 
     @Delete(':id')
-    delete(@Param('id') id:number){
-        return this.observationService.delete(id);
+    @UseGuards(AuthGuard())
+    async delete(@Body() createObservationDto: CreateObservationDto, @Param('id') id:number){
+        return await this.observationService.delete(id);
     }
 }

@@ -2,13 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { UserDto } from './../../user/dto/user.dto';
 import { Observation } from './../entities/observation.entity';
+import { UserService } from './../../user/services/user.service';
+import { CarService } from './../../car/services/car.service';
+
 import { States } from "./../../state-observation/entities/state-observation.entity";
+
+import { ObservationDto } from './../dto/observation.dto';
+import { toObservationDto } from './../../shared/mapper';
+import { CreateObservationDto } from './../dto/observation.create.dto';
 
 @Injectable()
 export class ObservationService {
     constructor(
-        @InjectRepository(Observation) private observationRepo: Repository<Observation>
+        @InjectRepository(Observation) private observationRepo: Repository<Observation>,
+        private readonly userService: UserService,
+        private readonly carService: CarService
     ) {}
 
     async findAll() {
@@ -52,30 +62,40 @@ export class ObservationService {
         return requests;
     }
 
-    register(body: any) {
-        const newObservation = this.observationRepo.create(body);
-        return this.observationRepo.save(newObservation);
+    async createObservation({ username }: UserDto, createObservationDto: CreateObservationDto, ): Promise<any> {
+        const { detail, car, stateObservation, userResolve } = createObservationDto;
+        const userCreator = await this.userService.findOne({ where: { username } });
+
+        const observation: Observation = await this.observationRepo.create({ detail, car, stateObservation, userCreator, userResolve });
+        await this.observationRepo.save(observation);
+        
+        return toObservationDto(observation);  
+    }    
+
+    async addCarObservation(createObservationDto: CreateObservationDto, id: number, { username }: UserDto){
+        const { detail, stateObservation, userResolve } = createObservationDto;
+        const userCreator = await this.userService.findOne({ where: { username } });
+        const car = await this.carService.findOne({where:{id}});
+        const observation: Observation = await this.observationRepo.create({ detail, car, stateObservation, userCreator, userResolve });
+        await this.observationRepo.save(observation);
+        return toObservationDto(observation);
     }
 
-    addCarObservation(body: any, idCar: number){
-        const newObject = {
-            ...body,
-            id: idCar
-        }
-        newObject.id = parseInt(newObject.id)
-        const newObservation = this.observationRepo.create(newObject);
-        return this.observationRepo.save(newObservation);
-    }
+    async update( id: number, createObservationDto: CreateObservationDto, { username }: UserDto){
 
-    async update( id: number, body:any ){
+        const { detail, car, stateObservation } = createObservationDto;
+        const userResolve = await this.userService.findOne({ where: { username } });
         const observation = await this.observationRepo.findOne(id);
-        this.observationRepo.merge(observation, body);
+        this.observationRepo.merge(observation, { detail, car, stateObservation, userResolve });
         return this.observationRepo.save(observation);
     }
 
-    async delete( id: number ) {
-        await this.observationRepo.delete(id);
-        return true;
+    async delete(id: number ) {
+        const value = await this.observationRepo.delete(id);
+        if(value.affected > 0){ 
+            return true
+        }
+        return false;
     }    
 
 }

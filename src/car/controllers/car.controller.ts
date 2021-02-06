@@ -11,8 +11,11 @@ export class CarController {
     ){}
 
     @Get()
-    getAll() {
-        return this.carService.findAll();
+    @UseGuards(AuthGuard())
+    async getAll(@Req() req: any) {
+        const user = <UserDto>req.user;
+
+        return await this.carService.findAll(user);
     }
 
     @Post('/create')

@@ -9,19 +9,19 @@ export class Observation {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({length: 100})
+    @Column({length: 100, nullable:false})
     detail: string;
 
-    @ManyToOne(() => StateObservation, stateObservation => stateObservation.observations)
+    @ManyToOne(() => StateObservation, stateObservation => stateObservation.observations, {nullable:false})
     stateObservation: StateObservation;
 
     @ManyToOne(() => Car, car => car.observations,{nullable:false})
     car: Car;
 
-    @ManyToOne(() => User, user => user.observationsCreator)
+    @ManyToOne(() => User, user => user.observationsCreator, {nullable:false})
     userCreator: User;
 
-    @ManyToOne(() => User, user => user.observationsResolve)
+    @ManyToOne(() => User, user => user.observationsResolve, )
     userResolve: User;
 
 }
