@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { User } from './../entities/user.entity';
-import { UserDto } from "./../dto/userDto";
-import { LoginUserDto } from "./../dto/loginUserDto";
-import { CreateUserDto } from "./../dto/createUserDto";
+import { UserDto } from "./../dto/user.dto";
+import { LoginUserDto } from "./../dto/login.user.dto";
+import { CreateUserDto } from "./../dto/create.user.dto";
 import { toUserDto } from "./../../shared/mapper";
 
 import { comparePasswords } from './../../shared/utils';

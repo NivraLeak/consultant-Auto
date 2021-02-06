@@ -1,9 +1,9 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { UserService } from './../user/services/user.service';
 import { JwtService } from '@nestjs/jwt'
-import { CreateUserDto } from './../user/dto/createUserDto';
-import { LoginUserDto } from './../user/dto/loginUserDto';
-import { UserDto } from './../user/dto/userDto';
+import { CreateUserDto } from './../user/dto/create.user.dto';
+import { LoginUserDto } from './../user/dto/login.user.dto';
+import { UserDto } from './../user/dto/user.dto';
 import { JwtPayload } from './interfaces/payload.interface';
 import { LoginStatus } from './interfaces/login-status.interface';
 import { RegistrationStatus } from './interfaces/registration-status.interface'

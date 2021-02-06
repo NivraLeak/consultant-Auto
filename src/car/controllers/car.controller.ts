@@ -1,5 +1,8 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { CarService } from './../services/car.service';
+import { AuthGuard } from '@nestjs/passport';
+import { UserDto } from './../../user/dto/user.dto';
+import { CreateCarDto } from './../dto/car.create.dto';
 
 @Controller('api/car')
 export class CarController {
@@ -12,9 +15,12 @@ export class CarController {
         return this.carService.findAll();
     }
 
-    @Post('/register')
-    create(@Body() body: any) {
-        return this.carService.register(body);
+    @Post('/create')
+    @UseGuards(AuthGuard())
+    async create(@Body() createCarDto: CreateCarDto, @Req() req: any) {
+        const user = <UserDto>req.user;
+
+        return await this.carService.createCar(user, createCarDto);
     }
 
 }

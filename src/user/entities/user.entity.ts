@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany,BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, BeforeInsert, ManyToOne } from 'typeorm';
 import { Observation } from "./../../observation/entities/observation.entity";
 import * as bcrypt from 'bcrypt';
 
@@ -25,6 +25,8 @@ export class User {
     })
     email: string;
     
+    @ManyToOne(type => User)owner?: User;
+
     @BeforeInsert()  
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10);  
